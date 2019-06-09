@@ -34,7 +34,7 @@ public class UserMealsUtil {
         Map<LocalDate, Integer> daysCalories = new HashMap<>();
         List<UserMealWithExceed> mealsListWithExceed = new ArrayList<>();
 
-        for (UserMeal meal: mealList) {
+        for (UserMeal meal : mealList) {
             LocalDate date = meal.getDateTime().toLocalDate();
             Integer calories = meal.getCalories();
 
@@ -42,8 +42,8 @@ public class UserMealsUtil {
             daysCalories.putIfAbsent(date, calories);
         }
 
-        for (UserMeal meal: mealList) {
-            if (isMealInPeriod(meal, startTime, endTime)) {
+        for (UserMeal meal : mealList) {
+            if (TimeUtil.isBetween(meal.getDateTime().toLocalTime(), startTime, endTime)) {
                 LocalDate date = meal.getDateTime().toLocalDate();
                 boolean isExceeded = false;
 
@@ -55,7 +55,7 @@ public class UserMealsUtil {
             }
         }
 
-       return mealsListWithExceed;
+        return mealsListWithExceed;
     }
 
     /**
@@ -67,7 +67,7 @@ public class UserMealsUtil {
                 .collect(Collectors.toMap(meal -> meal.getDateTime().toLocalDate(), UserMeal::getCalories, Integer::sum));
 
         return mealList.stream()
-                .filter(meal -> isMealInPeriod(meal, startTime, endTime))
+                .filter(meal -> TimeUtil.isBetween(meal.getDateTime().toLocalTime(), startTime, endTime))
                 .map(meal -> {
                     LocalDate date = meal.getDateTime().toLocalDate();
                     boolean isExceeded = false;
@@ -79,15 +79,5 @@ public class UserMealsUtil {
                     return new UserMealWithExceed(meal.getDateTime(), meal.getDescription(), meal.getCalories(), isExceeded);
                 }).collect(Collectors.toList());
 
-    }
-
-    private static boolean isMealInPeriod(UserMeal meal, LocalTime startTime, LocalTime endTime) {
-        LocalDateTime mealDateTime = meal.getDateTime();
-        LocalDate mealDate = LocalDate.of(mealDateTime.getYear(), mealDateTime.getMonth(), mealDateTime.getDayOfMonth());
-
-        LocalDateTime periodFrom = LocalDateTime.of(mealDate, startTime);
-        LocalDateTime periodTo = LocalDateTime.of(mealDate, endTime);
-
-        return (mealDateTime.isEqual(periodFrom) || mealDateTime.isAfter(periodFrom)) && (mealDateTime.isEqual(periodTo) || mealDateTime.isBefore(periodTo));
     }
 }
