@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MemoryStorage implements Storage {
+public class MealMemoryStorage implements Storage {
     private Map<Integer, Meal> storage = new ConcurrentHashMap<>();
-    private final static AtomicInteger idCounter = new AtomicInteger();
+    private final AtomicInteger idCounter = new AtomicInteger();
 
     @Override
     public void update(Meal meal) {

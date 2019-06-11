@@ -2,7 +2,7 @@ package ru.javawebinar.topjava.web;
 
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
-import ru.javawebinar.topjava.storage.MemoryStorage;
+import ru.javawebinar.topjava.storage.MealMemoryStorage;
 import ru.javawebinar.topjava.storage.Storage;
 import ru.javawebinar.topjava.util.MealsUtil;
 
@@ -18,7 +18,7 @@ import java.util.List;
 
 public class MealServlet extends HttpServlet {
     private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-    private Storage storage = new MemoryStorage();
+    private Storage storage = new MealMemoryStorage();
 
     @Override
     public void init() throws ServletException {
@@ -39,23 +39,13 @@ public class MealServlet extends HttpServlet {
         String description = request.getParameter("description");
         int calories = Integer.parseInt(request.getParameter("calories"));
 
-        Meal meal;
-        boolean isNew = false;
+        Meal meal = new Meal(date, description, calories);
 
         if (id != null && id.trim().length() != 0) {
-            meal = storage.get(Integer.parseInt(id));
-            meal.setDateTime(date);
-            meal.setDescription(description);
-            meal.setCalories(calories);
-        } else {
-            isNew = true;
-            meal = new Meal(date, description, calories);
-        }
-
-        if (isNew) {
-            storage.save(meal);
-        } else {
+            meal.setId(Integer.parseInt(id));
             storage.update(meal);
+        } else {
+            storage.save(meal);
         }
 
         response.sendRedirect("meals");

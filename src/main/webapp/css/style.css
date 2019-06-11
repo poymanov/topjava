@@ -1,7 +1,7 @@
-.meals-table {
+.meals-table td {
     color: #008000;
 }
 
-.meal-excess {
+.meal-excess td {
     color: #FF0000;
 }
