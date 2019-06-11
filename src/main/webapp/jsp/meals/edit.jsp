@@ -10,14 +10,7 @@
 <body>
 <main>
     <div class='container'>
-        <c:choose>
-            <c:when test="${meal.id == 0}">
-                <h1>Add Meal</h1>
-            </c:when>
-            <c:otherwise>
-                <h1>Edit - ${meal.id}</h1>
-            </c:otherwise>
-        </c:choose>
+        <h1><%= meal.getId() == 0 ? "Add Meal" : "Edit - " + meal.getDescription() %></h1>
 
         <form method="post">
             <input type="hidden" name="uuid" value="${meal.id}">
@@ -38,7 +31,7 @@
             </div>
 
             <button type="submit" class="btn btn-primary">Submit</button>
-            <a href="/topjava/meals" class="btn btn-success">Back</a>
+            <a href="meals" class="btn btn-success">Back</a>
         </form>
     </div>
 </main>

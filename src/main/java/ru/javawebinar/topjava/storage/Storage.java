@@ -5,9 +5,9 @@ import ru.javawebinar.topjava.model.Meal;
 import java.util.List;
 
 public interface Storage {
-    void update(Meal resume);
+    void update(Meal meal);
 
-    void save(Meal resume);
+    Meal save(Meal meal);
 
     Meal get(int id);
 

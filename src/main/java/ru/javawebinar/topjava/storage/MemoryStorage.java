@@ -1,15 +1,16 @@
 package ru.javawebinar.topjava.storage;
 
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.util.IdGenerator;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class MapStorage implements Storage {
-    protected Map<Integer, Meal> storage = new LinkedHashMap<>();
+public class MemoryStorage implements Storage {
+    private Map<Integer, Meal> storage = new ConcurrentHashMap<>();
+    private final static AtomicInteger idCounter = new AtomicInteger();
 
     @Override
     public void update(Meal meal) {
@@ -17,12 +18,14 @@ public class MapStorage implements Storage {
     }
 
     @Override
-    public void save(Meal meal) {
+    public Meal save(Meal meal) {
         if (meal.getId() == 0) {
-            meal = new Meal(IdGenerator.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories());
+            meal.setId(getNextId());
         }
 
         storage.put(meal.getId(), meal);
+
+        return meal;
     }
 
     @Override
@@ -38,5 +41,9 @@ public class MapStorage implements Storage {
     @Override
     public List<Meal> getAll() {
         return new ArrayList<>(storage.values());
+    }
+
+    private int getNextId() {
+        return idCounter.incrementAndGet();
     }
 }

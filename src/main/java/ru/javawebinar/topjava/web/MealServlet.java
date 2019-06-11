@@ -1,9 +1,8 @@
 package ru.javawebinar.topjava.web;
 
-import org.slf4j.Logger;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
-import ru.javawebinar.topjava.storage.MapStorage;
+import ru.javawebinar.topjava.storage.MemoryStorage;
 import ru.javawebinar.topjava.storage.Storage;
 import ru.javawebinar.topjava.util.MealsUtil;
 
@@ -13,17 +12,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import static org.slf4j.LoggerFactory.getLogger;
-
 public class MealServlet extends HttpServlet {
-    private static final Logger log = getLogger(UserServlet.class);
     private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-    private Storage storage = new MapStorage();
+    private Storage storage = new MemoryStorage();
 
     @Override
     public void init() throws ServletException {
@@ -48,11 +43,13 @@ public class MealServlet extends HttpServlet {
         boolean isNew = false;
 
         if (id != null && id.trim().length() != 0) {
-            Meal currentMeal = storage.get(Integer.parseInt(id));
-            meal = new Meal(currentMeal.getId(), date, description, calories);
+            meal = storage.get(Integer.parseInt(id));
+            meal.setDateTime(date);
+            meal.setDescription(description);
+            meal.setCalories(calories);
         } else {
             isNew = true;
-            meal = new Meal(0, date, description, calories);
+            meal = new Meal(date, description, calories);
         }
 
         if (isNew) {
@@ -65,52 +62,37 @@ public class MealServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String action = request.getParameter("action");
+        String paramAction = request.getParameter("action");
+        String paramId = request.getParameter("id");
 
-        if (action == null) {
-            List<MealTo> meals = new ArrayList<>();
-
-            for (Meal meal : storage.getAll()) {
-                meals.add(MealsUtil.createWithExcess(meal, meal.getId() < 4));
-            }
-
-            request.setAttribute("meals", meals);
-            request.setAttribute("dateTimeFormatter", dateTimeFormatter);
-            request.getRequestDispatcher("jsp/meals/list.jsp").forward(request, response);
-
-            return;
-        }
-
-        String id = request.getParameter("id");
-        int mealId = id != null ? Integer.parseInt(id) : 0;
+        String action = paramAction != null ? paramAction : "list";
+        int mealId = paramId != null ? Integer.parseInt(paramId) : 0;
 
         Meal meal;
         String template;
 
         switch (action) {
             case "create":
-                meal = new Meal(mealId, null, null, 0);
+                meal = new Meal(null, null, 0);
                 template = "jsp/meals/edit.jsp";
+                request.setAttribute("meal", meal);
                 break;
             case "delete":
                 storage.delete(mealId);
                 response.sendRedirect("meals");
                 return;
-            case "view":
-                meal = storage.get(mealId);
-                template = "jsp/meals/view.jsp";
-                break;
             case "update":
                 meal = storage.get(mealId);
                 template = "jsp/meals/edit.jsp";
+                request.setAttribute("meal", meal);
                 break;
             default:
-                throw new IllegalArgumentException("Action " + action + " is illegal");
+                List<MealTo> meals = MealsUtil.getFilteredWithExcess(storage.getAll(), LocalTime.MIN, LocalTime.MAX, 2000);
+                request.setAttribute("meals", meals);
+                template = "jsp/meals/list.jsp";
         }
 
-        request.setAttribute("meal", meal);
         request.setAttribute("dateTimeFormatter", dateTimeFormatter);
-
         request.getRequestDispatcher(template).forward(request, response);
     }
 }
