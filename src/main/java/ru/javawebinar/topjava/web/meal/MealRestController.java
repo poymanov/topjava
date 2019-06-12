@@ -24,6 +24,11 @@ public class MealRestController {
         return service.getAll();
     }
 
+    public List<Meal> getAllByUserId(int userId) {
+        log.info("getAll for user {}", userId);
+        return service.getAllByUserId(userId);
+    }
+
     public Meal get(int id, int userId) {
         log.info("get {} for user {}", id, userId);
         return service.get(id, userId);

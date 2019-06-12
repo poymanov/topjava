@@ -10,6 +10,7 @@ import ru.javawebinar.topjava.util.MealsUtil;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryMealRepositoryImpl implements MealRepository {
@@ -69,6 +70,16 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
         List<Meal> meals = new ArrayList<>(repository.values());
         meals.sort(Collections.reverseOrder());
         return meals;
+    }
+
+    @Override
+    public List<Meal> getAllByUserId(int userId) {
+        return repository
+                .values()
+                .stream()
+                .filter(meal -> meal.getUserId() == userId)
+                .sorted(Collections.reverseOrder())
+                .collect(Collectors.toList());
     }
 }
 

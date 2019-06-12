@@ -15,7 +15,7 @@ public class Meal extends AbstractBaseEntity implements Comparable<Meal> {
     private final int userId;
 
     public Meal(Integer userId, LocalDateTime dateTime, String description, int calories) {
-        this( null, userId, dateTime, description, calories);
+        this(null, userId, dateTime, description, calories);
     }
 
     public Meal(Integer id, Integer userId, LocalDateTime dateTime, String description, int calories) {
@@ -71,6 +71,7 @@ public class Meal extends AbstractBaseEntity implements Comparable<Meal> {
     public String toString() {
         return "Meal{" +
                 "id=" + id +
+                "userId=" + userId +
                 ", dateTime=" + dateTime +
                 ", description='" + description + '\'' +
                 ", calories=" + calories +

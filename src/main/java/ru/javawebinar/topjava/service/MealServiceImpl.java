@@ -43,12 +43,17 @@ public class MealServiceImpl implements MealService {
     @Override
     public void update(Meal meal, int userId) {
         checkNotFound(meal, "this param");
-        checkNotFound(meal.getUserId() != userId, "this user");
+        checkNotFound(meal.getUserId() == userId, "this user");
         repository.save(meal);
     }
 
     @Override
     public List<Meal> getAll() {
         return repository.getAll();
+    }
+
+    @Override
+    public List<Meal> getAllByUserId(int userId) {
+        return repository.getAllByUserId(userId);
     }
 }
