@@ -33,8 +33,8 @@ public class MealServlet extends HttpServlet {
 
     @Override
     public void destroy() {
-        super.destroy();
         appCtx.close();
+        super.destroy();
     }
 
     @Override
@@ -108,6 +108,19 @@ public class MealServlet extends HttpServlet {
                 }
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
+                break;
+            case "filter":
+                log.info("getAll with filters");
+
+                String dateFrom = request.getParameter("dateFrom");
+                String dateTo = request.getParameter("dateTo");
+
+                try {
+                    request.setAttribute("meals", controller.getAllWithFilters(dateFrom, dateTo));
+                } catch (Exception e) {
+                    throw new ServletException(e.getMessage());
+                }
+                request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
             case "all":
             default:

@@ -10,6 +10,7 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -54,5 +55,9 @@ public class MealServiceImpl implements MealService {
     @Override
     public List<Meal> getAllByUserId(int userId) {
         return repository.getAllByUserId(userId);
+    }
+
+    public List<Meal> getAllByUserWithFilters(int userId, LocalDateTime dateFrom, LocalDateTime dateTo) {
+        return repository.getAllByUserWithFilters(userId, dateFrom, dateTo);
     }
 }

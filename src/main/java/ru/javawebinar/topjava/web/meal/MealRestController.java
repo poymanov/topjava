@@ -13,6 +13,7 @@ import ru.javawebinar.topjava.web.SecurityUtil;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -33,6 +34,28 @@ public class MealRestController {
         log.info("getAll for user {}", userId);
 
         return MealsUtil.getWithExcess(service.getAllByUserId(userId), MealsUtil.DEFAULT_CALORIES_PER_DAY);
+    }
+
+    public List<MealTo> getAllWithFilters(String dateFrom, String dateTo) throws Exception {
+        int userId = getAuthUserId();
+        log.info("getAll for user {}", userId);
+
+        LocalDateTime dateFromDate;
+        LocalDateTime dateToDate;
+
+        if (dateFrom != null && dateFrom.trim().length() != 0) {
+            dateFromDate = LocalDateTime.parse(dateFrom);
+        } else {
+            dateFromDate = LocalDateTime.MIN;
+        }
+
+        if (dateTo != null && dateTo.trim().length() != 0) {
+            dateToDate = LocalDateTime.parse(dateTo);
+        } else {
+            dateToDate = LocalDateTime.MAX;
+        }
+
+        return MealsUtil.getWithExcess(service.getAllByUserWithFilters(userId, dateFromDate, dateToDate), MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
 
     public Meal get(int id) throws Exception {

@@ -22,6 +22,23 @@
     <h2>Meals</h2>
     <a href="meals?action=create">Add Meal</a>
     <hr/>
+
+    <div>
+        <h3>Filters</h3>
+        <form>
+            <input type="hidden" name="action" value="filter">
+            <p>
+                <label for="date-from">Date from</label>
+                <input id="date-from" type="datetime-local" name="dateFrom">
+            </p>
+            <p>
+                <label for="date-to">Date to</label>
+                <input id="date-to" type="datetime-local" name="dateTo">
+            </p>
+            <button type="submit">Filter</button>
+        </form>
+    </div>
+
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
         <tr>
