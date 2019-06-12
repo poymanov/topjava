@@ -2,8 +2,8 @@ package ru.javawebinar.topjava.repository.inmemory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 
@@ -11,9 +11,10 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Repository
 public class InMemoryMealRepositoryImpl implements MealRepository {
-    private static final Logger log = LoggerFactory.getLogger(InMemoryUserRepositoryImpl.class);
     private Map<Integer, Meal> repository = new ConcurrentHashMap<>();
+    private static final Logger log = LoggerFactory.getLogger(InMemoryUserRepositoryImpl.class);
     private AtomicInteger counter = new AtomicInteger(0);
 
     {
@@ -36,14 +37,19 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     }
 
     @Override
-    public void delete(int id, int userId) {
+    public boolean delete(int id, int userId) {
         if (get(id, userId) == null) {
             log.info("Failed to delete meal {}, user {}", id, userId);
-            return;
+            return false;
         }
 
-        repository.remove(id);
-        log.info("Meal deleted ({})", id);
+        if (repository.remove(id) != null) {
+            log.info("Meal deleted ({})", id);
+            return true;
+        } else {
+            log.info("Failed to delete meal {}", id);
+            return false;
+        }
     }
 
     @Override
@@ -59,7 +65,7 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     }
 
     @Override
-    public Collection<Meal> getAll() {
+    public List<Meal> getAll() {
         List<Meal> meals = new ArrayList<>(repository.values());
         meals.sort(Collections.reverseOrder());
         return meals;
