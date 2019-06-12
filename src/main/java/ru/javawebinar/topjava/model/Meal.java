@@ -12,16 +12,19 @@ public class Meal extends AbstractBaseEntity implements Comparable<Meal> {
 
     private final int calories;
 
-    private final int userId;
+    private int userId;
 
-    public Meal(Integer userId, LocalDateTime dateTime, String description, int calories) {
-        this(null, userId, dateTime, description, calories);
+    public Meal(LocalDateTime dateTime, String description, int calories) {
+        this(null, dateTime, description, calories);
     }
 
     public Meal(Integer id, Integer userId, LocalDateTime dateTime, String description, int calories) {
-        super(id);
-        Objects.requireNonNull(userId, "UserId must not be null");
+        this(id, dateTime, description, calories);
         this.userId = userId;
+    }
+
+    public Meal(Integer id, LocalDateTime dateTime, String description, int calories) {
+        super(id);
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
@@ -51,6 +54,10 @@ public class Meal extends AbstractBaseEntity implements Comparable<Meal> {
         return userId;
     }
 
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -68,18 +75,20 @@ public class Meal extends AbstractBaseEntity implements Comparable<Meal> {
     }
 
     @Override
+    public int compareTo(Meal o) {
+        return dateTime.compareTo(o.getDateTime());
+    }
+
+    @Override
     public String toString() {
         return "Meal{" +
                 "id=" + id +
-                "userId=" + userId +
+                ", userId=" + userId +
                 ", dateTime=" + dateTime +
                 ", description='" + description + '\'' +
                 ", calories=" + calories +
                 '}';
     }
 
-    @Override
-    public int compareTo(Meal o) {
-        return dateTime.compareTo(o.getDateTime());
-    }
+
 }

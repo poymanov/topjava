@@ -20,16 +20,21 @@ import java.util.Objects;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
-
     private MealRestController controller;
+    private ConfigurableApplicationContext appCtx;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
-        try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml")) {
-            controller = appCtx.getBean(MealRestController.class);
-        }
+        ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
+        controller = appCtx.getBean(MealRestController.class);
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        appCtx.close();
     }
 
     @Override
@@ -50,10 +55,18 @@ public class MealServlet extends HttpServlet {
 
         if (meal.isNew()) {
             log.info("Create {}", meal);
-            controller.create(meal);
+            try {
+                controller.create(meal);
+            } catch (Exception e) {
+                throw new ServletException(e.getMessage());
+            }
         } else {
             log.info("Update {}", meal);
-            controller.update(meal, userId);
+            try {
+                controller.update(meal, Integer.parseInt(id));
+            } catch (Exception e) {
+                throw new ServletException(e.getMessage());
+            }
         }
 
 
@@ -76,22 +89,34 @@ public class MealServlet extends HttpServlet {
             case "delete":
                 int id = getId(request);
                 log.info("Delete {}", id);
-                controller.delete(id, userId);
+                try {
+                    controller.delete(id);
+                } catch (Exception e) {
+                    throw new ServletException(e.getMessage());
+                }
                 response.sendRedirect("meals");
                 break;
             case "create":
             case "update":
-                final Meal meal = "create".equals(action) ?
-                        new Meal(userId, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
-                        controller.get(getId(request), userId);
+                final Meal meal;
+                try {
+                    meal = "create".equals(action) ?
+                            new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
+                            controller.get(getId(request));
+                } catch (Exception e) {
+                    throw new ServletException(e.getMessage());
+                }
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
                 break;
             case "all":
             default:
                 log.info("getAll");
-                request.setAttribute("meals",
-                        MealsUtil.getWithExcess(controller.getAllByUserId(userId), MealsUtil.DEFAULT_CALORIES_PER_DAY));
+                try {
+                    request.setAttribute("meals", controller.getAllByUser());
+                } catch (Exception e) {
+                    throw new ServletException(e.getMessage());
+                }
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }

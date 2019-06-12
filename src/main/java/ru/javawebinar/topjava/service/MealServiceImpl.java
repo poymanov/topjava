@@ -24,7 +24,6 @@ public class MealServiceImpl implements MealService {
 
     @Override
     public Meal create(Meal meal) {
-        checkNew(meal);
         return repository.save(meal);
     }
 
@@ -42,9 +41,9 @@ public class MealServiceImpl implements MealService {
 
     @Override
     public void update(Meal meal, int userId) {
-        checkNotFound(meal, "this param");
-        checkNotFound(meal.getUserId() == userId, "this user");
-        repository.save(meal);
+        if (get(meal.getId(), userId) != null) {
+            repository.save(meal);
+        }
     }
 
     @Override
