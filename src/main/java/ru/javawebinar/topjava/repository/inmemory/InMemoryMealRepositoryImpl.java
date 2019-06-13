@@ -40,7 +40,11 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
 
             log.info("Meal is saving ({})", meal.getId());
 
-            return repository.get(userId).putIfAbsent(meal.getId(), meal);
+            if (repository.get(userId).putIfAbsent(meal.getId(), meal) == null) {
+                return meal;
+            }
+
+            return null;
         }
 
         log.info("Meal is updating ({})", meal.getId());
