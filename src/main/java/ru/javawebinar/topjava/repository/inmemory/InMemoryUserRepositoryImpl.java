@@ -13,8 +13,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
 public class InMemoryUserRepositoryImpl implements UserRepository {
-    private Map<Integer, User> repository = new ConcurrentHashMap<>();
     private static final Logger log = LoggerFactory.getLogger(InMemoryUserRepositoryImpl.class);
+    private Map<Integer, User> repository = new ConcurrentHashMap<>();
     private AtomicInteger counter = new AtomicInteger(0);
 
     @Override

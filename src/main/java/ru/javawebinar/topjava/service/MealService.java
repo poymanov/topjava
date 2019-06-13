@@ -7,15 +7,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MealService {
-    Meal create(Meal user);
+    Meal create(Meal user, int userId);
 
-    void delete(int id, int userId) throws NotFoundException;
+    boolean delete(int id, int userId) throws NotFoundException;
 
     Meal get(int id, int userId) throws NotFoundException;
 
-    void update(Meal meal, int userId);
-
-    List<Meal> getAll();
+    Meal update(Meal meal, int userId);
 
     List<Meal> getAllByUserId(int userId);
 

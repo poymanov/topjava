@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import javax.servlet.ServletConfig;
@@ -27,7 +26,7 @@ public class MealServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
-        ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
+        appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
         controller = appCtx.getBean(MealRestController.class);
     }
 
@@ -39,97 +38,60 @@ public class MealServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (!SecurityUtil.isAuth()) {
-            response.sendRedirect("users");
-            return;
-        }
-
         request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
-        int userId = SecurityUtil.getAuthUserId();
 
-        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id), userId,
+        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")));
 
         if (meal.isNew()) {
-            log.info("Create {}", meal);
-            try {
-                controller.create(meal);
-            } catch (Exception e) {
-                throw new ServletException(e.getMessage());
-            }
+            controller.create(meal);
         } else {
-            log.info("Update {}", meal);
-            try {
-                controller.update(meal, Integer.parseInt(id));
-            } catch (Exception e) {
-                throw new ServletException(e.getMessage());
-            }
+            controller.update(meal, Integer.parseInt(id));
         }
-
 
         response.sendRedirect("meals");
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (!SecurityUtil.isAuth()) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.sendRedirect("users");
-            return;
-        }
-
-
         String action = request.getParameter("action");
-        int userId = SecurityUtil.getAuthUserId();
 
         switch (action == null ? "all" : action) {
             case "delete":
                 int id = getId(request);
-                log.info("Delete {}", id);
-                try {
-                    controller.delete(id);
-                } catch (Exception e) {
-                    throw new ServletException(e.getMessage());
-                }
+                controller.delete(id);
                 response.sendRedirect("meals");
                 break;
             case "create":
             case "update":
                 final Meal meal;
-                try {
-                    meal = "create".equals(action) ?
-                            new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
-                            controller.get(getId(request));
-                } catch (Exception e) {
-                    throw new ServletException(e.getMessage());
-                }
+                meal = "create".equals(action) ?
+                        new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
+                        controller.get(getId(request));
+
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
                 break;
-            case "filter":
-                log.info("getAll with filters");
-
-                String dateFrom = request.getParameter("dateFrom");
-                String dateTo = request.getParameter("dateTo");
-
-                try {
-                    request.setAttribute("meals", controller.getAllWithFilters(dateFrom, dateTo));
-                } catch (Exception e) {
-                    throw new ServletException(e.getMessage());
-                }
-                request.getRequestDispatcher("/meals.jsp").forward(request, response);
-                break;
+//            case "filter":
+//                log.info("getAll with filters");
+//
+//                String dateFrom = request.getParameter("dateFrom");
+//                String dateTo = request.getParameter("dateTo");
+//
+//                try {
+//                    request.setAttribute("meals", controller.getAllWithFilters(dateFrom, dateTo));
+//                } catch (Exception e) {
+//                    throw new ServletException(e.getMessage());
+//                }
+//                request.getRequestDispatcher("/meals.jsp").forward(request, response);
+//                break;
             case "all":
             default:
                 log.info("getAll");
-                try {
-                    request.setAttribute("meals", controller.getAllByUser());
-                } catch (Exception e) {
-                    throw new ServletException(e.getMessage());
-                }
+                request.setAttribute("meals", controller.getAllByUser());
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }

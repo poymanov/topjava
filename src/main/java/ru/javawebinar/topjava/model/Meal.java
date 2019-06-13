@@ -18,11 +18,6 @@ public class Meal extends AbstractBaseEntity implements Comparable<Meal> {
         this(null, dateTime, description, calories);
     }
 
-    public Meal(Integer id, Integer userId, LocalDateTime dateTime, String description, int calories) {
-        this(id, dateTime, description, calories);
-        this.userId = userId;
-    }
-
     public Meal(Integer id, LocalDateTime dateTime, String description, int calories) {
         super(id);
         this.dateTime = dateTime;
