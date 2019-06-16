@@ -71,11 +71,10 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     }
 
     public List<Meal> getAllByUserWithFilters(int userId, LocalDate dateFrom, LocalDate dateTo, LocalTime timeFrom, LocalTime timeTo) {
-        return getFilteredUserMeals(userId, meal -> true);
+        return getFilteredUserMeals(userId, meal -> DateTimeUtil.isBetweenDate(meal, dateFrom, dateTo, timeFrom, timeTo));
     }
 
-    private List<Meal> getFilteredUserMeals(int userId, Predicate<Meal> filter)
-    {
+    private List<Meal> getFilteredUserMeals(int userId, Predicate<Meal> filter) {
         return repository
                 .get(userId).values()
                 .stream()

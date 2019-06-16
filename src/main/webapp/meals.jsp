@@ -45,6 +45,7 @@
                 <input id="time-to" type="time" name="timeTo">
             </p>
             <button type="submit">Filter</button>
+            <a href="meals">Reset</a>
         </form>
     </div>
 

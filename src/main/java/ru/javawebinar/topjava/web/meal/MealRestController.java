@@ -38,7 +38,7 @@ public class MealRestController {
         int userId = getAuthUserId();
         log.info("getAll for user {}", userId);
 
-        return MealsUtil.getWithExcess(service.getAllByUserWithFilters(userId, dateFrom, dateTo), MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        return MealsUtil.getWithExcess(service.getAllByUserWithFilters(userId, dateFrom, dateTo, timeFrom, timeTo), MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
 
     public Meal get(int id) {
