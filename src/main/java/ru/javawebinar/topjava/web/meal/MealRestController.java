@@ -38,6 +38,22 @@ public class MealRestController {
         int userId = getAuthUserId();
         log.info("getAll for user {}", userId);
 
+        if (dateFrom == null) {
+            dateFrom = LocalDate.MIN;
+        }
+
+        if (dateTo == null) {
+            dateTo = LocalDate.MAX;
+        }
+
+        if (timeFrom == null) {
+            timeFrom = LocalTime.MIN;
+        }
+
+        if (timeTo == null) {
+            timeTo = LocalTime.MAX;
+        }
+
         return MealsUtil.getWithExcess(service.getAllByUserWithFilters(userId, dateFrom, dateTo, timeFrom, timeTo), MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
 

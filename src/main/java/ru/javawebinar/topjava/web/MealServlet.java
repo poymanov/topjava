@@ -80,10 +80,10 @@ public class MealServlet extends HttpServlet {
             case "filter":
                 log.info("getAll with filters");
 
-                LocalDate dateFrom = makeDate(request.getParameter("dateFrom"), LocalDate.MIN);
-                LocalDate dateTo = makeDate(request.getParameter("dateTo"), LocalDate.MAX);
-                LocalTime timeFrom = makeTime(request.getParameter("timeFrom"), LocalTime.MIN);
-                LocalTime timeTo = makeTime(request.getParameter("timeTo"), LocalTime.MAX);
+                LocalDate dateFrom = makeDate(request.getParameter("dateFrom"));
+                LocalDate dateTo = makeDate(request.getParameter("dateTo"));
+                LocalTime timeFrom = makeTime(request.getParameter("timeFrom"));
+                LocalTime timeTo = makeTime(request.getParameter("timeTo"));
 
                 request.setAttribute("meals", controller.getAllWithFilters(dateFrom, dateTo, timeFrom, timeTo));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
@@ -102,14 +102,14 @@ public class MealServlet extends HttpServlet {
         return Integer.parseInt(paramId);
     }
 
-    private LocalDate makeDate(String dateParam, LocalDate defaultDate)
+    private LocalDate makeDate(String dateParam)
     {
-        return isParamExists(dateParam) ? LocalDate.parse(dateParam) : defaultDate;
+        return isParamExists(dateParam) ? LocalDate.parse(dateParam) : null;
     }
 
-    private LocalTime makeTime(String timeParam, LocalTime defaultTime)
+    private LocalTime makeTime(String timeParam)
     {
-        return isParamExists(timeParam) ? LocalTime.parse(timeParam) : defaultTime;
+        return isParamExists(timeParam) ? LocalTime.parse(timeParam) : null;
     }
 
     private boolean isParamExists(String param)
