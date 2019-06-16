@@ -29,11 +29,20 @@
             <input type="hidden" name="action" value="filter">
             <p>
                 <label for="date-from">Date from</label>
-                <input id="date-from" type="datetime-local" name="dateFrom">
+                <input id="date-from" type="date" name="dateFrom">
             </p>
             <p>
                 <label for="date-to">Date to</label>
-                <input id="date-to" type="datetime-local" name="dateTo">
+                <input id="date-to" type="date" name="dateTo">
+            </p>
+            <hr>
+            <p>
+                <label for="time-from">Time from</label>
+                <input id="time-from" type="time" name="timeFrom">
+            </p>
+            <p>
+                <label for="time-to">Time to</label>
+                <input id="time-to" type="time" name="timeTo">
             </p>
             <button type="submit">Filter</button>
         </form>

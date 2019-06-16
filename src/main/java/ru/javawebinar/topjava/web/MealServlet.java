@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
@@ -75,19 +77,17 @@ public class MealServlet extends HttpServlet {
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
                 break;
-//            case "filter":
-//                log.info("getAll with filters");
-//
-//                String dateFrom = request.getParameter("dateFrom");
-//                String dateTo = request.getParameter("dateTo");
-//
-//                try {
-//                    request.setAttribute("meals", controller.getAllWithFilters(dateFrom, dateTo));
-//                } catch (Exception e) {
-//                    throw new ServletException(e.getMessage());
-//                }
-//                request.getRequestDispatcher("/meals.jsp").forward(request, response);
-//                break;
+            case "filter":
+                log.info("getAll with filters");
+
+                LocalDate dateFrom = makeDate(request.getParameter("dateFrom"), LocalDate.MIN);
+                LocalDate dateTo = makeDate(request.getParameter("dateTo"), LocalDate.MAX);
+                LocalTime timeFrom = makeTime(request.getParameter("timeFrom"), LocalTime.MIN);
+                LocalTime timeTo = makeTime(request.getParameter("timeTo"), LocalTime.MAX);
+
+                request.setAttribute("meals", controller.getAllWithFilters(dateFrom, dateTo, timeFrom, timeTo));
+                request.getRequestDispatcher("/meals.jsp").forward(request, response);
+                break;
             case "all":
             default:
                 log.info("getAll");
@@ -100,5 +100,20 @@ public class MealServlet extends HttpServlet {
     private int getId(HttpServletRequest request) {
         String paramId = Objects.requireNonNull(request.getParameter("id"));
         return Integer.parseInt(paramId);
+    }
+
+    private LocalDate makeDate(String dateParam, LocalDate defaultDate)
+    {
+        return isParamExists(dateParam) ? LocalDate.parse(dateParam) : defaultDate;
+    }
+
+    private LocalTime makeTime(String timeParam, LocalTime defaultTime)
+    {
+        return isParamExists(timeParam) ? LocalTime.parse(timeParam) : defaultTime;
+    }
+
+    private boolean isParamExists(String param)
+    {
+        return param != null && param.trim().length() != 0;
     }
 }

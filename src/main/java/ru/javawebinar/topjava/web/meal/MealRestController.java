@@ -14,7 +14,9 @@ import ru.javawebinar.topjava.web.SecurityUtil;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Controller
@@ -32,26 +34,11 @@ public class MealRestController {
         return MealsUtil.getWithExcess(service.getAllByUserId(userId), MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
 
-    public List<MealTo> getAllWithFilters(String dateFrom, String dateTo) throws Exception {
+    public List<MealTo> getAllWithFilters(LocalDate dateFrom, LocalDate dateTo, LocalTime timeFrom, LocalTime timeTo){
         int userId = getAuthUserId();
         log.info("getAll for user {}", userId);
 
-        LocalDateTime dateFromDate;
-        LocalDateTime dateToDate;
-
-        if (dateFrom != null && dateFrom.trim().length() != 0) {
-            dateFromDate = LocalDateTime.parse(dateFrom);
-        } else {
-            dateFromDate = LocalDateTime.MIN;
-        }
-
-        if (dateTo != null && dateTo.trim().length() != 0) {
-            dateToDate = LocalDateTime.parse(dateTo);
-        } else {
-            dateToDate = LocalDateTime.MAX;
-        }
-
-        return MealsUtil.getWithExcess(service.getAllByUserWithFilters(userId, dateFromDate, dateToDate), MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        return MealsUtil.getWithExcess(service.getAllByUserWithFilters(userId, dateFrom, dateTo), MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
 
     public Meal get(int id) {
