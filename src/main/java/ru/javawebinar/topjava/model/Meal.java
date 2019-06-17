@@ -3,7 +3,6 @@ package ru.javawebinar.topjava.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Objects;
 
 public class Meal extends AbstractBaseEntity implements Comparable<Meal> {
     private final LocalDateTime dateTime;
@@ -51,22 +50,6 @@ public class Meal extends AbstractBaseEntity implements Comparable<Meal> {
 
     public void setUserId(int userId) {
         this.userId = userId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Meal meal = (Meal) o;
-        return calories == meal.calories &&
-                userId == meal.userId &&
-                dateTime.equals(meal.dateTime) &&
-                description.equals(meal.description);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(dateTime, description, calories, userId);
     }
 
     @Override
