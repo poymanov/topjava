@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.DateTimeUtil;
+import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -42,11 +44,11 @@ public class MealServiceImpl implements MealService {
     }
 
     @Override
-    public List<Meal> getAllByUserId(int userId) {
-        return repository.getAllByUserId(userId);
+    public List<MealTo> getAllByUserId(int userId) {
+        return MealsUtil.getWithExcess(repository.getAllByUserId(userId), MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
 
-    public List<Meal> getAllByUserWithFilters(int userId, LocalDate dateFrom, LocalDate dateTo, LocalTime timeFrom, LocalTime timeTo) {
-        return repository.getAllByUserWithFilters(userId, dateFrom, dateTo, timeFrom, timeTo);
+    public List<MealTo> getAllByUserWithFilters(int userId, LocalDate dateFrom, LocalDate dateTo, LocalTime timeFrom, LocalTime timeTo) {
+        return MealsUtil.getWithExcessWithFilter(repository.getAllByUserId(userId), MealsUtil.DEFAULT_CALORIES_PER_DAY, meal -> DateTimeUtil.isBetweenDate(meal, dateFrom, dateTo, timeFrom, timeTo));
     }
 }

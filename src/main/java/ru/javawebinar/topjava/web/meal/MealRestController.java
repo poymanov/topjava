@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
@@ -15,7 +14,6 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -31,10 +29,10 @@ public class MealRestController {
         int userId = getAuthUserId();
         log.info("getAll for user {}", userId);
 
-        return MealsUtil.getWithExcess(service.getAllByUserId(userId), MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        return service.getAllByUserId(userId);
     }
 
-    public List<MealTo> getAllWithFilters(LocalDate dateFrom, LocalDate dateTo, LocalTime timeFrom, LocalTime timeTo){
+    public List<MealTo> getAllWithFilters(LocalDate dateFrom, LocalDate dateTo, LocalTime timeFrom, LocalTime timeTo) {
         int userId = getAuthUserId();
         log.info("getAll for user {}", userId);
 
@@ -54,7 +52,7 @@ public class MealRestController {
             timeTo = LocalTime.MAX;
         }
 
-        return MealsUtil.getWithExcess(service.getAllByUserWithFilters(userId, dateFrom, dateTo, timeFrom, timeTo), MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        return service.getAllByUserWithFilters(userId, dateFrom, dateTo, timeFrom, timeTo);
     }
 
     public Meal get(int id) {
