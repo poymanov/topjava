@@ -1,16 +1,39 @@
 package ru.javawebinar.topjava.model;
 
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@NamedQueries({
+        @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id=:id AND m.user.id=:user_id"),
+        @NamedQuery(name = Meal.BY_USER_SORTED, query = "SELECT m FROM Meal m WHERE m.user.id=?1 ORDER BY m.dateTime DESC"),
+        @NamedQuery(name = Meal.BY_USER_SORTED_FILTERED, query = "SELECT m FROM Meal m WHERE m.user.id=?1 AND m.dateTime BETWEEN ?2 AND ?3 ORDER BY m.dateTime DESC"),
+        @NamedQuery(name = Meal.BY_USER_MEAL, query = "SELECT m FROM Meal m WHERE m.id=:id AND m.user.id=:user_id "),
+})
+@Entity
+@Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "meals_unique_user_datetime_idx")})
 public class Meal extends AbstractBaseEntity {
+    public static final String DELETE = "Meal.delete";
+    public static final String BY_USER_SORTED = "Meal.getByUserSorted";
+    public static final String BY_USER_SORTED_FILTERED = "Meal.getByUserSortedFiltered";
+    public static final String BY_USER_MEAL = "Meal.getUserMeal";
+
+
+    @Column(name = "date_time", columnDefinition = "timestamp default now()")
+    @NotNull
     private LocalDateTime dateTime;
 
+    @NotNull
+    @NotBlank
+    @Column(name = "description", nullable = false)
     private String description;
 
+    @Min(1)
+    @Column(name = "calories", nullable = false)
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
