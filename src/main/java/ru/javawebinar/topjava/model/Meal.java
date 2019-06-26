@@ -1,9 +1,7 @@
 package ru.javawebinar.topjava.model;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -22,21 +20,23 @@ public class Meal extends AbstractBaseEntity {
     public static final String BY_USER_SORTED_FILTERED = "Meal.getByUserSortedFiltered";
     public static final String BY_USER_MEAL = "Meal.getUserMeal";
 
-
-    @Column(name = "date_time", columnDefinition = "timestamp default now()")
+    @Column(name = "date_time", columnDefinition = "timestamp default now()", nullable = false)
     @NotNull
     private LocalDateTime dateTime;
 
     @NotNull
     @NotBlank
+    @Size(min = 2, max = 120)
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Min(1)
+    @Min(10)
+    @Max(5000)
     @Column(name = "calories", nullable = false)
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
     private User user;
 
     public Meal() {
