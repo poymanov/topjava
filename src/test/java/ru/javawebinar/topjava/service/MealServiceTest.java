@@ -19,6 +19,8 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -33,8 +35,7 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest extends RunListener {
     private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
-
-    private static long startTime;
+    private static Map<String, Long> testStatistics = new HashMap<>();
 
     @Rule
     public final ExpectedException exception = ExpectedException.none();
@@ -50,7 +51,10 @@ public class MealServiceTest extends RunListener {
     public Stopwatch stopwatch = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
-            log.info("Method {} finished, spent {} microseconds", description.getMethodName(), TimeUnit.NANOSECONDS.toMicros(nanos));
+            String methodName = description.getMethodName();
+            Long executionTime = TimeUnit.NANOSECONDS.toMillis(nanos);
+            testStatistics.put(description.getMethodName(), executionTime);
+            log.info("Method {} finished, spent {} milliseconds", methodName, executionTime);
         }
     };
 
@@ -112,15 +116,14 @@ public class MealServiceTest extends RunListener {
                 LocalDate.of(2015, Month.MAY, 30), USER_ID), MEAL3, MEAL2, MEAL1);
     }
 
-    @BeforeClass
-    public static void before() {
-        startTime = System.nanoTime();
-    }
-
     @AfterClass
     public static void after() {
-        String testName = MealServiceTest.class.getName();
-        Long testDuration = TimeUnit.NANOSECONDS.toMicros(System.nanoTime() - startTime);
-        log.info("Test {} finished, spent {} microseconds", testName, testDuration);
+        log.info("-----------------------------------------------------------------------------");
+        log.info("\u001b[7mSummary\u001B[0m");
+        log.info("-----------------------------------------------------------------------------");
+        for (Map.Entry<String, Long> entry : testStatistics.entrySet()) {
+            log.info("{} - {}", "\u001b[1m" + entry.getKey() + "\u001B[0m", "\u001B[32m" + entry.getValue() + " ms" + "\u001B[0m");
+        }
+        log.info("-----------------------------------------------------------------------------");
     }
 }
