@@ -10,7 +10,9 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @Transactional(readOnly = true)
@@ -28,7 +30,7 @@ public class JpaMealRepositoryImpl implements MealRepository {
             em.persist(meal);
             return meal;
         } else {
-            if (em.find(Meal.class, meal.getId()).getUser().getId().equals(userId)) {
+            if (getByUser(meal.getId(), userId) != null) {
                 meal.setUser(user);
                 return em.merge(meal);
             } else {
@@ -48,11 +50,7 @@ public class JpaMealRepositoryImpl implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        List<Meal> users = em.createNamedQuery(Meal.BY_USER_MEAL, Meal.class)
-                .setParameter("id", id)
-                .setParameter("user_id", userId)
-                .getResultList();
-        return DataAccessUtils.singleResult(users);
+        return getByUser(id, userId);
     }
 
     @Override
@@ -69,5 +67,13 @@ public class JpaMealRepositoryImpl implements MealRepository {
                 .setParameter(2, startDate)
                 .setParameter(3, endDate)
                 .getResultList();
+    }
+
+    private Meal getByUser(int id, int userId) {
+        List<Meal> meals = em.createNamedQuery(Meal.BY_USER_MEAL, Meal.class)
+                .setParameter("id", id)
+                .setParameter("user_id", userId)
+                .getResultList();
+        return DataAccessUtils.singleResult(meals);
     }
 }
