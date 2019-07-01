@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.service.common;
 
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.Stopwatch;
@@ -48,6 +49,12 @@ public abstract class AbstractServiceTest {
     static {
         // needed only for java.util.logging (postgres driver)
         SLF4JBridgeHandler.install();
+    }
+
+    @BeforeClass
+    public static void clearResults()
+    {
+        results = new StringBuilder();
     }
 
     @AfterClass
