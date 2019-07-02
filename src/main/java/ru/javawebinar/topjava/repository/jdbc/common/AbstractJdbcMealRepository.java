@@ -11,9 +11,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 public abstract class AbstractJdbcMealRepository<T> implements MealRepository {
@@ -85,4 +83,9 @@ public abstract class AbstractJdbcMealRepository<T> implements MealRepository {
     }
 
     public abstract T convertDateTime(LocalDateTime dateTime);
+
+    @Override
+    public Meal getWithUser(int id, int userId) {
+        throw new UnsupportedOperationException();
+    }
 }

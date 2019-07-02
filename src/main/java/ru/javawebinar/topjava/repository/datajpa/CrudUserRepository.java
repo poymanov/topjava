@@ -15,7 +15,6 @@ import java.util.Optional;
 public interface CrudUserRepository extends JpaRepository<User, Integer> {
     @Transactional
     @Modifying
-//    @Query(name = User.DELETE)
     @Query("DELETE FROM User u WHERE u.id=:id")
     int delete(@Param("id") int id);
 
@@ -31,7 +30,6 @@ public interface CrudUserRepository extends JpaRepository<User, Integer> {
 
     User getByEmail(String email);
 
-    //select k from Cat c inner join fetch c.kittens k where c.id = :id order by k.age
     @Query("FROM User u LEFT JOIN FETCH u.meals m WHERE u.id = :id ORDER BY m.dateTime DESC")
     User findByIdWithMeals(@Param("id") int id);
 }
