@@ -30,6 +30,6 @@ public interface CrudUserRepository extends JpaRepository<User, Integer> {
 
     User getByEmail(String email);
 
-    @Query("FROM User u LEFT JOIN FETCH u.meals m WHERE u.id = :id ORDER BY m.dateTime DESC")
+    @Query("FROM User u LEFT JOIN FETCH u.meals m WHERE u.id = :id")
     User findByIdWithMeals(@Param("id") int id);
 }

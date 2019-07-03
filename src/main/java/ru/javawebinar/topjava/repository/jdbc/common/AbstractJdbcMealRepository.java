@@ -83,9 +83,4 @@ public abstract class AbstractJdbcMealRepository<T> implements MealRepository {
     }
 
     public abstract T convertDateTime(LocalDateTime dateTime);
-
-    @Override
-    public Meal getWithUser(int id, int userId) {
-        throw new UnsupportedOperationException();
-    }
 }
