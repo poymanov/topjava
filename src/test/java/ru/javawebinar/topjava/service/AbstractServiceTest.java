@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.service.common;
+package ru.javawebinar.topjava.service;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
