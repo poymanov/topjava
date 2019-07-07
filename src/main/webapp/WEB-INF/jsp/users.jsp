@@ -9,8 +9,6 @@
 </head>
 <jsp:include page="fragments/headTag.jsp"/>
 <body>
-<h3><a href="index.html">Home</a></h3>
-<h2>Users</h2>
 <jsp:include page="fragments/bodyHeader.jsp"/>
 
 <section>
