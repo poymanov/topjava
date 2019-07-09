@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.repository.jpa;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
@@ -68,5 +69,17 @@ public class JpaUserRepositoryImpl implements UserRepository {
     @Override
     public List<User> getAll() {
         return em.createNamedQuery(User.ALL_SORTED, User.class).getResultList();
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteRole(int userId, Role role) {
+        return em.find(User.class, userId).getRoles().remove(role);
+    }
+
+    @Override
+    @Transactional
+    public boolean addRole(int userId, Role role) {
+        return em.find(User.class, userId).getRoles().add(role);
     }
 }

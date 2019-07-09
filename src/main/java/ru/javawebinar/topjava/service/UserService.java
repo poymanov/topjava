@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.service;
 
 
+import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
@@ -19,6 +20,10 @@ public interface UserService {
     void update(User user);
 
     List<User> getAll();
+
+    void deleteRole(int id, Role role);
+
+    void addRole(int userId, Role role);
 
     User getWithMeals(int id);
 }

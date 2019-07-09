@@ -5,6 +5,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
@@ -52,6 +53,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAll() {
         return repository.getAll();
+    }
+
+    @Override
+    public void deleteRole(int id, Role role) {
+        checkNotFound(repository.deleteRole(id, role), "id=" + id + ", role_id=" + role.name());
+    }
+
+    @Override
+    public void addRole(int userId, Role role) {
+        if(!repository.addRole(userId, role)) {
+            throw new RuntimeException("Failed to add role: user_id=" + userId + ", role=" + role.name());
+        }
     }
 
     @CacheEvict(value = "users", allEntries = true)
