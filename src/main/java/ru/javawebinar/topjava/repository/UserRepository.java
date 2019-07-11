@@ -19,10 +19,6 @@ public interface UserRepository {
 
     List<User> getAll();
 
-    boolean deleteRole(int userId, Role role);
-
-    boolean addRole(int userId, Role role);
-
     default User getWithMeals(int id) {
         throw new UnsupportedOperationException();
     }

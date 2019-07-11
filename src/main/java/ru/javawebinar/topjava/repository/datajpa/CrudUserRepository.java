@@ -36,14 +36,4 @@ public interface CrudUserRepository extends JpaRepository<User, Integer> {
     @EntityGraph(attributePaths = {"meals", "roles"})
     @Query("SELECT u FROM User u WHERE u.id=?1")
     User getWithMeals(int id);
-
-    @Transactional
-    @Modifying
-    @Query(value = "DELETE from user_roles ur WHERE ur.user_id=:user_id AND ur.role=:role", nativeQuery = true)
-    int deleteRole(@Param("user_id") String user_id, @Param("role") String role);
-
-    @Transactional
-    @Modifying
-    @Query(value = "INSERT INTO user_roles (user_id, role) VALUES (:user_id, :role)", nativeQuery = true)
-    int addRole(@Param("user_id") String user_id, @Param("role") String role);
 }

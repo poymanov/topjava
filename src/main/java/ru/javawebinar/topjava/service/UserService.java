@@ -21,9 +21,5 @@ public interface UserService {
 
     List<User> getAll();
 
-    void deleteRole(int id, Role role);
-
-    void addRole(int userId, Role role);
-
     User getWithMeals(int id);
 }

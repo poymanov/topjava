@@ -70,16 +70,4 @@ public class JpaUserRepositoryImpl implements UserRepository {
     public List<User> getAll() {
         return em.createNamedQuery(User.ALL_SORTED, User.class).getResultList();
     }
-
-    @Override
-    @Transactional
-    public boolean deleteRole(int userId, Role role) {
-        return em.find(User.class, userId).getRoles().remove(role);
-    }
-
-    @Override
-    @Transactional
-    public boolean addRole(int userId, Role role) {
-        return em.find(User.class, userId).getRoles().add(role);
-    }
 }

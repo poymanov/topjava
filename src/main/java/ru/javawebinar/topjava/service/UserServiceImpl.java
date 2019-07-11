@@ -55,18 +55,6 @@ public class UserServiceImpl implements UserService {
         return repository.getAll();
     }
 
-    @Override
-    public void deleteRole(int id, Role role) {
-        checkNotFound(repository.deleteRole(id, role), "id=" + id + ", role_id=" + role.name());
-    }
-
-    @Override
-    public void addRole(int userId, Role role) {
-        if(!repository.addRole(userId, role)) {
-            throw new RuntimeException("Failed to add role: user_id=" + userId + ", role=" + role.name());
-        }
-    }
-
     @CacheEvict(value = "users", allEntries = true)
     @Override
     public void update(User user) {

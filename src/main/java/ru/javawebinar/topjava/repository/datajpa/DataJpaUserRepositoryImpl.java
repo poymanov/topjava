@@ -42,16 +42,6 @@ public class DataJpaUserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean deleteRole(int userId, Role role) {
-        return crudRepository.deleteRole(String.valueOf(userId), role.name()) != 0;
-    }
-
-    @Override
-    public boolean addRole(int userId, Role role) {
-        return crudRepository.addRole(String.valueOf(userId), role.name()) != 0;
-    }
-
-    @Override
     public User getWithMeals(int id) {
         return crudRepository.getWithMeals(id);
     }

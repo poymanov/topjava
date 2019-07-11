@@ -31,16 +31,6 @@ public class InMemoryUserRepositoryImpl extends InMemoryBaseRepositoryImpl<User>
     }
 
     @Override
-    public boolean deleteRole(int userId, Role role) {
-        return false;
-    }
-
-    @Override
-    public boolean addRole(int userId, Role role) {
-        return false;
-    }
-
-    @Override
     public User getByEmail(String email) {
         Objects.requireNonNull(email, "email must not be null");
         return getCollection().stream()

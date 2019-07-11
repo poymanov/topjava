@@ -25,13 +25,15 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Autowired
     private CacheManager cacheManager;
 
-    @Autowired
+    @Autowired(required = false)
     protected JpaUtil jpaUtil;
 
     @Before
     public void setUp() throws Exception {
         cacheManager.getCache("users").clear();
-        jpaUtil.clear2ndLevelHibernateCache();
+        if (jpaUtil != null) {
+            jpaUtil.clear2ndLevelHibernateCache();
+        }
     }
 
     @Test
@@ -62,7 +64,9 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Test
     public void get() throws Exception {
         User user = service.get(USER_ID);
+        User admin = service.get(ADMIN_ID);
         assertMatch(user, USER);
+        assertMatch(admin, ADMIN);
     }
 
     @Test(expected = NotFoundException.class)
@@ -89,30 +93,6 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     public void getAll() throws Exception {
         List<User> all = service.getAll();
         assertMatch(all, ADMIN, USER);
-    }
-
-    @Test
-    public void deleteRole() throws Exception {
-        service.deleteRole(ADMIN_ID, Role.ROLE_USER);
-        User user = service.get(ADMIN_ID);
-        assertRolesMatch(user, Role.ROLE_ADMIN);
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void deleteNonExistentRole() throws Exception {
-        service.deleteRole(USER_ID, Role.ROLE_ADMIN);
-    }
-
-    @Test
-    public void addRole() throws Exception {
-        service.addRole(USER_ID, Role.ROLE_ADMIN);
-        User user = service.get(USER_ID);
-        assertRolesMatch(user, Role.ROLE_USER, Role.ROLE_ADMIN);
-    }
-
-    @Test(expected = RuntimeException.class)
-    public void addExistedRole() throws Exception {
-        service.addRole(ADMIN_ID, Role.ROLE_ADMIN);
     }
 
     @Test
