@@ -4,32 +4,32 @@
 <%@ taglib prefix="fn" uri="http://topjava.javawebinar.ru/functions" %>
 
 <html>
-<jsp:include page="../fragments/headTag.jsp"/>
+<jsp:include page="fragments/headTag.jsp"/>
 <body>
-<jsp:include page="../fragments/bodyHeader.jsp"/>
+<jsp:include page="fragments/bodyHeader.jsp"/>
 <section>
     <h3><spring:message code="meal.title"/></h3>
     <form action="${pageContext.request.contextPath}/meals/filter">
         <dl>
             <dt><spring:message code="meal.date_from"/>:</dt>
-            <dd><input type="date" name="startDate" value="${startDate}"></dd>
+            <dd><input type="date" name="startDate" value="${param.startDate}"></dd>
         </dl>
         <dl>
             <dt><spring:message code="meal.date_to"/>:</dt>
-            <dd><input type="date" name="endDate" value="${endDate}"></dd>
+            <dd><input type="date" name="endDate" value="${param.endDate}"></dd>
         </dl>
         <dl>
             <dt><spring:message code="meal.time_from"/>:</dt>
-            <dd><input type="time" name="startTime" value="${startTime}"></dd>
+            <dd><input type="time" name="startTime" value="${param.startTime}"></dd>
         </dl>
         <dl>
             <dt><spring:message code="meal.time_to"/>:</dt>
-            <dd><input type="time" name="endTime" value="${endTime}"></dd>
+            <dd><input type="time" name="endTime" value="${param.endTime}"></dd>
         </dl>
         <button type="submit"><spring:message code="common.filter"/></button>
     </form>
     <hr/>
-    <a href="${pageContext.request.contextPath}/meals/create"><spring:message code="common.add"/></a>
+    <a href="${pageContext.request.contextPath}/meals/get"><spring:message code="common.add"/></a>
     <hr/>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
@@ -47,7 +47,7 @@
                 <td>${fn:formatDateTime(meal.dateTime)}</td>
                 <td>${meal.description}</td>
                 <td>${meal.calories}</td>
-                <td><a href="${pageContext.request.contextPath}/meals/update?id=${meal.id}"><spring:message code="common.update"/></a></td>
+                <td><a href="${pageContext.request.contextPath}/meals/get?id=${meal.id}"><spring:message code="common.update"/></a></td>
                 <td>
 
                     <form method="post" action="${pageContext.request.contextPath}/meals/delete?id=${meal.id}">
@@ -62,6 +62,6 @@
         </c:forEach>
     </table>
 </section>
-<jsp:include page="../fragments/footer.jsp"/>
+<jsp:include page="fragments/footer.jsp"/>
 </body>
 </html>

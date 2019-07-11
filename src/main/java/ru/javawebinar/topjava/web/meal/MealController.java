@@ -3,10 +3,7 @@ package ru.javawebinar.topjava.web.meal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 
@@ -26,12 +23,6 @@ public class MealController extends AbstractMealController {
         super(service);
     }
 
-    @GetMapping
-    public String index(Model model) {
-        model.addAttribute("meals", super.getAll());
-        return "meals/index";
-    }
-
     @GetMapping("filter")
     public String search(HttpServletRequest request, Model model) {
         LocalDate startDate = parseLocalDate(request.getParameter("startDate"));
@@ -40,47 +31,35 @@ public class MealController extends AbstractMealController {
         LocalTime endTime = parseLocalTime(request.getParameter("endTime"));
 
         model.addAttribute("meals", super.getBetween(startDate, startTime, endDate, endTime));
-        model.addAttribute("startDate", startDate);
-        model.addAttribute("endDate", endDate);
-        model.addAttribute("startTime", startTime);
-        model.addAttribute("endTime", endDate);
 
-        return "meals/index";
+        return "meals";
     }
 
-    @RequestMapping(value = "create", method = {RequestMethod.GET, RequestMethod.POST})
-    public String create(HttpServletRequest request, Model model) {
-        String currentMethod = request.getMethod();
+    @GetMapping("get")
+    public String get(HttpServletRequest request, Model model) {
+        Meal meal;
 
-        if (currentMethod.equals(RequestMethod.GET.name())) {
-            model.addAttribute("meal", new Meal());
-            return "meals/create";
-        } else if (currentMethod.equals(RequestMethod.POST.name())) {
-            Meal meal = new Meal(
-                    LocalDateTime.parse(request.getParameter("dateTime")),
-                    request.getParameter("description"),
-                    Integer.parseInt(request.getParameter("calories")));
-            super.create(meal);
+        if (request.getParameter("id") == null) {
+            meal = new Meal();
+        } else {
+            meal = super.get(getId(request));
         }
 
-        return "redirect:/meals";
+        model.addAttribute("meal", meal);
+        return "mealsForm";
     }
 
-    @RequestMapping(value = "update", method = {RequestMethod.GET, RequestMethod.PUT})
-    public String update(HttpServletRequest request, Model model) {
-        String currentMethod = request.getMethod();
-        int id = getId(request);
+    @PostMapping("save")
+    public String save(HttpServletRequest request) {
+        Meal meal = new Meal(
+                LocalDateTime.parse(request.getParameter("dateTime")),
+                request.getParameter("description"),
+                Integer.parseInt(request.getParameter("calories")));
 
-        if (currentMethod.equals(RequestMethod.GET.name())) {
-            model.addAttribute("meal", super.get(id));
-            return "meals/update";
-        } else if (currentMethod.equals(RequestMethod.PUT.name())) {
-            Meal meal = new Meal(
-                    id,
-                    LocalDateTime.parse(request.getParameter("dateTime")),
-                    request.getParameter("description"),
-                    Integer.parseInt(request.getParameter("calories")));
-
+        if (request.getParameter("id").isBlank()) {
+            super.create(meal);
+        } else {
+            int id = getId(request);
             super.update(meal, id);
         }
 
