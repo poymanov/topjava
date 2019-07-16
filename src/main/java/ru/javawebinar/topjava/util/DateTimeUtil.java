@@ -34,6 +34,14 @@ public class DateTimeUtil {
         return ldt == null ? "" : ldt.format(DATE_TIME_FORMATTER);
     }
 
+    public static String toStringDate(LocalDate ld) {
+        return ld == null ? "" : ld.format(DateTimeFormatter.ISO_LOCAL_DATE);
+    }
+
+    public static String toStringTime(LocalTime lt) {
+        return lt == null ? "" : lt.format(DateTimeFormatter.ISO_LOCAL_TIME);
+    }
+
     public static LocalDate parseLocalDate(@Nullable String str) {
         return StringUtils.isEmpty(str) ? null : LocalDate.parse(str);
     }

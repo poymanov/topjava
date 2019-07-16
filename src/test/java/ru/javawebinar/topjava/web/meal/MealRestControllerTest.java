@@ -1,16 +1,18 @@
 package ru.javawebinar.topjava.web.meal;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.SecurityUtil;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
@@ -25,12 +27,6 @@ import static ru.javawebinar.topjava.TestUtil.readFromJson;
 
 class MealRestControllerTest extends AbstractControllerTest {
     private static final String REST_URL = MealRestController.REST_URL + '/';
-
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime dateFrom = LocalDateTime.of(2015, Month.MAY, 31, 0, 0);
-
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime dateTo = LocalDateTime.of(2015, Month.MAY, 31, 23, 59);
 
     @Test
     void testDelete() throws Exception {
@@ -86,9 +82,41 @@ class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void testGetBetween() throws Exception {
-        mockMvc.perform(get(REST_URL + "filter?dateFrom=" + dateFrom + "&dateTo=" + dateTo))
+        String dateFrom = DateTimeUtil.toStringDate(LocalDate.of(2015, Month.MAY, 31));
+        String timeFrom = DateTimeUtil.toStringTime(LocalTime.MIN);
+        String dateTo = DateTimeUtil.toStringDate(LocalDate.of(2015, Month.MAY, 31));
+        String timeTo = DateTimeUtil.toStringTime(LocalTime.MAX);
+
+        mockMvc.perform(get(REST_URL + "filter?startDate=" + dateFrom + "&startTime=" + timeFrom + "&endDate=" + dateTo + "&endTime=" + timeTo))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(contentJson(MealsUtil.getWithExcess(Arrays.asList(MEAL6, MEAL5, MEAL4), SecurityUtil.authUserCaloriesPerDay())));
     }
+
+    @Test
+    void testGetBetweenByDate() throws Exception {
+        String dateFrom = DateTimeUtil.toStringDate(LocalDate.of(2015, Month.MAY, 31));
+        String dateTo = DateTimeUtil.toStringDate(LocalDate.of(2015, Month.MAY, 31));
+
+        mockMvc.perform(get(REST_URL + "filter?startDate=" + dateFrom + "&endDate=" + dateTo))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(contentJson(MealsUtil.getWithExcess(Arrays.asList(MEAL6, MEAL5, MEAL4), SecurityUtil.authUserCaloriesPerDay())));
+    }
+
+    @Test
+    void testGetBetweenByTime() throws Exception {
+        LocalTime startTime = LocalTime.of(10, 0);
+        LocalTime endTime = LocalTime.of(13, 0);
+        String timeFrom = DateTimeUtil.toStringTime(startTime);
+        String timeTo = DateTimeUtil.toStringTime(endTime);
+
+        mockMvc.perform(get(REST_URL + "filter?startTime=" + timeFrom + "&endTime=" + timeTo))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(contentJson(MealsUtil.getFilteredWithExcess(MEALS, SecurityUtil.authUserCaloriesPerDay(), startTime, endTime)));
+
+    }
+
+
 }
