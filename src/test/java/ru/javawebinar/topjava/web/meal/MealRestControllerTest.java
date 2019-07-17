@@ -1,9 +1,11 @@
 package ru.javawebinar.topjava.web.meal;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
@@ -14,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
+//import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 
@@ -27,6 +30,9 @@ import static ru.javawebinar.topjava.TestUtil.readFromJson;
 
 class MealRestControllerTest extends AbstractControllerTest {
     private static final String REST_URL = MealRestController.REST_URL + '/';
+
+    @Autowired
+    protected MealService mealService;
 
     @Test
     void testDelete() throws Exception {
@@ -80,6 +86,17 @@ class MealRestControllerTest extends AbstractControllerTest {
         assertMatch(mealService.get(MEAL1_ID, USER_ID), updated);
     }
 
+//    @Test
+//    void testGetBetween() throws Exception {
+//        String dateFrom = LocalDateTime.of(2015, Month.MAY, 31, 0, 0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+//        String dateTo = LocalDateTime.of(2015, Month.MAY, 31, 23, 59).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+//
+//        mockMvc.perform(get(REST_URL + "filter").param("dateFrom", dateFrom).param("dateTo", dateTo))
+//                .andExpect(status().isOk())
+//                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+//                .andExpect(contentJson(MealsUtil.getWithExcess(Arrays.asList(MEAL6, MEAL5, MEAL4), SecurityUtil.authUserCaloriesPerDay())));
+//    }
+
     @Test
     void testGetBetween() throws Exception {
         String dateFrom = DateTimeUtil.toStringDate(LocalDate.of(2015, Month.MAY, 31));
@@ -87,7 +104,7 @@ class MealRestControllerTest extends AbstractControllerTest {
         String dateTo = DateTimeUtil.toStringDate(LocalDate.of(2015, Month.MAY, 31));
         String timeTo = DateTimeUtil.toStringTime(LocalTime.MAX);
 
-        mockMvc.perform(get(REST_URL + "filter?startDate=" + dateFrom + "&startTime=" + timeFrom + "&endDate=" + dateTo + "&endTime=" + timeTo))
+        mockMvc.perform(get(REST_URL + "filter").param("startDate", dateFrom).param("startTime", timeFrom).param("endDate", dateTo).param("endTime", timeTo))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(contentJson(MealsUtil.getWithExcess(Arrays.asList(MEAL6, MEAL5, MEAL4), SecurityUtil.authUserCaloriesPerDay())));
@@ -98,7 +115,7 @@ class MealRestControllerTest extends AbstractControllerTest {
         String dateFrom = DateTimeUtil.toStringDate(LocalDate.of(2015, Month.MAY, 31));
         String dateTo = DateTimeUtil.toStringDate(LocalDate.of(2015, Month.MAY, 31));
 
-        mockMvc.perform(get(REST_URL + "filter?startDate=" + dateFrom + "&endDate=" + dateTo))
+        mockMvc.perform(get(REST_URL + "filter").param("startDate", dateFrom).param("endDate", dateTo))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(contentJson(MealsUtil.getWithExcess(Arrays.asList(MEAL6, MEAL5, MEAL4), SecurityUtil.authUserCaloriesPerDay())));
@@ -111,11 +128,10 @@ class MealRestControllerTest extends AbstractControllerTest {
         String timeFrom = DateTimeUtil.toStringTime(startTime);
         String timeTo = DateTimeUtil.toStringTime(endTime);
 
-        mockMvc.perform(get(REST_URL + "filter?startTime=" + timeFrom + "&endTime=" + timeTo))
+        mockMvc.perform(get(REST_URL + "filter").param("startTime", timeFrom).param("endTime", timeTo))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(contentJson(MealsUtil.getFilteredWithExcess(MEALS, SecurityUtil.authUserCaloriesPerDay(), startTime, endTime)));
-
     }
 
 
