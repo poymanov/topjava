@@ -33,4 +33,21 @@ $(function () {
         ]
     });
     makeEditable();
+
+    $('#meals-filter').on('submit', function (e) {
+        e.preventDefault();
+        updateTable();
+    });
+
+    $('#meals-filter-reset').on('click', function (e) {
+        e.preventDefault();
+        $('#meals-filter').trigger('reset');
+        updateTable();
+    });
 });
+
+function updateTable() {
+    $.get(ajaxUrl + "filter", $('#meals-filter').serialize()).done(function (data) {
+        datatableApi.clear().rows.add(data).draw();
+    });
+}
