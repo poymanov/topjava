@@ -39,4 +39,27 @@ $(function () {
         ]
     });
     makeEditable();
+
+    $('.user-activity').on('change', function (e) {
+        var url;
+        var id = $(this).data("userid");
+
+        if ($(this).prop('checked')) {
+            url = ajaxUrl + "enable";
+        } else {
+            url = ajaxUrl + "disable";
+        }
+
+        url += "/" + id;
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: {id: id},
+            success: function () {
+                updateTable();
+                successNoty("Updated");
+            }
+        });
+    });
 });
