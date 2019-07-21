@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static ru.javawebinar.topjava.UserTestData.*;
 
 public abstract class AbstractUserServiceTest extends AbstractServiceTest {
@@ -82,6 +82,22 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
         updated.setRoles(Collections.singletonList(Role.ROLE_ADMIN));
         service.update(new User(updated));
         assertMatch(service.get(USER_ID), updated);
+    }
+
+    @Test
+    void enable() {
+        User newUser = new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.ROLE_USER));
+        User created = service.create(new User(newUser));
+        service.enable(created.getId());
+        User user = service.get(created.getId());
+        assertTrue(user.isEnabled());
+    }
+
+    @Test
+    void disable() {
+        service.disable(USER_ID);
+        User user = service.get(USER_ID);
+        assertFalse(user.isEnabled());
     }
 
     @Test
