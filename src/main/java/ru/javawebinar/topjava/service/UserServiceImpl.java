@@ -70,18 +70,9 @@ public class UserServiceImpl implements UserService {
     @CacheEvict(value = "users", allEntries = true)
     @Transactional
     @Override
-    public void enable(int id) throws NotFoundException {
+    public void active(int id, boolean active) throws NotFoundException {
         User user = checkNotFoundWithId(repository.get(id), id);
-        user.setEnabled(true);
-        checkNotFoundWithId(repository.save(user), user.getId());
-    }
-
-    @CacheEvict(value = "users", allEntries = true)
-    @Transactional
-    @Override
-    public void disable(int id) throws NotFoundException {
-        User user = checkNotFoundWithId(repository.get(id), id);
-        user.setEnabled(false);
+        user.setEnabled(active);
         checkNotFoundWithId(repository.save(user), user.getId());
     }
 }

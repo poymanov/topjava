@@ -88,14 +88,14 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     void enable() {
         User newUser = new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.ROLE_USER));
         User created = service.create(new User(newUser));
-        service.enable(created.getId());
+        service.active(created.getId(), true);
         User user = service.get(created.getId());
         assertTrue(user.isEnabled());
     }
 
     @Test
     void disable() {
-        service.disable(USER_ID);
+        service.active(USER_ID, false);
         User user = service.get(USER_ID);
         assertFalse(user.isEnabled());
     }

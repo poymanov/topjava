@@ -51,11 +51,11 @@ public abstract class AbstractUserController {
 
     public void enable(int id) {
         log.info("enable {}", id);
-        service.enable(id);
+        service.active(id, true);
     }
 
     public void disable(int id) {
         log.info("disable {}", id);
-        service.disable(id);
+        service.active(id, false);
     }
 }
