@@ -43,6 +43,7 @@ $(function () {
     $('.user-activity').on('change', function (e) {
         var url;
         var id = $(this).data("userid");
+        var row = $(this).closest('tr');
 
         if ($(this).prop('checked')) {
             url = ajaxUrl + "enable";
@@ -57,7 +58,7 @@ $(function () {
             url: url,
             data: {id: id},
             success: function () {
-                updateTable();
+                row.toggleClass('disabled-user');
                 successNoty("Updated");
             }
         });
