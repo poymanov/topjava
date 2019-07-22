@@ -28,7 +28,7 @@ $(function () {
         "order": [
             [
                 0,
-                "asc"
+                "desc"
             ]
         ]
     });
@@ -36,7 +36,7 @@ $(function () {
 
     $('#meals-filter').on('submit', function (e) {
         e.preventDefault();
-        updateTable();
+        updateTableWithFilter();
     });
 
     $('#meals-filter-reset').on('click', function (e) {
@@ -46,8 +46,8 @@ $(function () {
     });
 });
 
-function updateTable() {
+function updateTableWithFilter() {
     $.get(ajaxUrl + "filter", $('#meals-filter').serialize()).done(function (data) {
-        datatableApi.clear().rows.add(data).draw();
+        fillTable(data);
     });
 }
