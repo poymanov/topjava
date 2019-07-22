@@ -9,6 +9,7 @@ import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
@@ -67,14 +68,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @CacheEvict(value = "users", allEntries = true)
+    @Transactional
     @Override
     public void enable(int id) throws NotFoundException {
-        checkNotFoundWithId(repository.enable(id), id);
+        User user = checkNotFoundWithId(repository.get(id), id);
+        user.setEnabled(true);
+        checkNotFoundWithId(repository.save(user), user.getId());
     }
 
     @CacheEvict(value = "users", allEntries = true)
+    @Transactional
     @Override
     public void disable(int id) throws NotFoundException {
-        checkNotFoundWithId(repository.disable(id), id);
+        User user = checkNotFoundWithId(repository.get(id), id);
+        user.setEnabled(false);
+        checkNotFoundWithId(repository.save(user), user.getId());
     }
 }
