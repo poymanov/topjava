@@ -41,25 +41,21 @@ $(function () {
     makeEditable();
 
     $('.user-activity').on('change', function (e) {
-        var url;
         var id = $(this).data("userid");
         var row = $(this).closest('tr');
-
-        if ($(this).prop('checked')) {
-            url = ajaxUrl + "enable";
-        } else {
-            url = ajaxUrl + "disable";
-        }
-
-        url += "/" + id;
+        var active = !!$(this).prop('checked');
+        var input = $(this);
 
         $.ajax({
             type: "POST",
-            url: url,
-            data: {id: id},
+            url: ajaxUrl + "active/" + id,
+            data: {active: active},
             success: function () {
                 row.toggleClass('disabled-user');
                 successNoty("Updated");
+            },
+            error: function () {
+                input.prop('checked', !active);
             }
         });
     });
