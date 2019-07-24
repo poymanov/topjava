@@ -1,4 +1,4 @@
-function makeEditable() {
+function makeEditable(ctx) {
     context = ctx;
     form = $('#detailsForm');
 
