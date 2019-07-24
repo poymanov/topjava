@@ -46,7 +46,7 @@ function save() {
     var form = $("#detailsForm");
     $.ajax({
         type: "POST",
-        url: ajaxUrl,
+        url: context.ajaxUrl,
         data: form.serialize(),
         success: function () {
             $("#editRow").modal("hide");

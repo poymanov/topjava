@@ -46,6 +46,7 @@
         <webjars-datetimepicker.version>2.5.20</webjars-datetimepicker.version>
         <webjars-noty.version>3.1.4</webjars-noty.version>
         <webjars-datatables.version>1.10.19</webjars-datatables.version>
+        <webjars-moment.version>2.24.0</webjars-moment.version>
     </properties>
 
     <build>
@@ -271,6 +272,17 @@
                 <exclusion>
                     <groupId>org.webjars.bower</groupId>
                     <artifactId>php-date-formatter</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.bower</groupId>
+            <artifactId>moment</artifactId>
+            <version>${webjars-moment.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.webjars.bower</groupId>
+                    <artifactId>jquery</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
