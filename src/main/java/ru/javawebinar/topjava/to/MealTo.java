@@ -1,22 +1,34 @@
 package ru.javawebinar.topjava.to;
 
+import org.hibernate.validator.constraints.Range;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class MealTo extends BaseTo {
+public class MealTo extends BaseTo implements Serializable {
+    private static final long serialVersionUID = 1L;
 
+    @NotNull
     private LocalDateTime dateTime;
 
+    @NotBlank
+    @Size(min = 2, max = 120)
     private String description;
 
-    private int calories;
+    @NotNull
+    @Range(min = 10, max = 5000)
+    private Integer calories;
 
     private boolean excess;
 
     public MealTo() {
     }
 
-    public MealTo(Integer id, LocalDateTime dateTime, String description, int calories, boolean excess) {
+    public MealTo(Integer id, LocalDateTime dateTime, String description, Integer calories, boolean excess) {
         super(id);
         this.dateTime = dateTime;
         this.description = description;
@@ -32,7 +44,7 @@ public class MealTo extends BaseTo {
         return description;
     }
 
-    public int getCalories() {
+    public Integer getCalories() {
         return calories;
     }
 
@@ -66,5 +78,17 @@ public class MealTo extends BaseTo {
                 ", calories=" + calories +
                 ", excess=" + excess +
                 '}';
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setCalories(Integer calories) {
+        this.calories = calories;
     }
 }
