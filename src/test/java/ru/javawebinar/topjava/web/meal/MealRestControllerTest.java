@@ -29,7 +29,7 @@ class MealRestControllerTest extends AbstractControllerTest {
     private MealService service;
 
     @Test
-    void testGetForbidden() throws Exception {
+    void testGetUnauthorized() throws Exception {
         mockMvc.perform(get(REST_URL)).andExpect(status().isUnauthorized());
     }
 
