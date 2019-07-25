@@ -14,6 +14,20 @@ function clearFilter() {
 }
 
 $(function () {
+    $('#startDate, #endDate').datetimepicker({
+        format: 'YYYY-MM-DD',
+        timepicker:false
+    });
+
+    $('#startTime, #endTime').datetimepicker({
+        format: 'HH:MM',
+        datepicker: false
+    });
+
+    $('#dateTime').datetimepicker({
+        format: 'YYYY-MM-DD HH:MM'
+    });
+
     makeEditable({
         ajaxUrl: mealsAjaxUrl,
         datatableApi: $("#datatable").DataTable({
