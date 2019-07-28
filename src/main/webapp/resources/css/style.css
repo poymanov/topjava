@@ -1,11 +1,3 @@
-.meal-excess {
-    color: red;
-}
-
-.meal-not-excess {
-    color: green;
-}
-
 tr[data-mealExcess="false"] {
     color: green;
 }

@@ -71,11 +71,7 @@ $(function () {
                 ]
             ],
             rowCallback: function (row, data) {
-                if (data.excess) {
-                    $(row).addClass('meal-excess');
-                } else {
-                    $(row).addClass('meal-not-excess');
-                }
+                $(row).attr("data-mealExcess", data.excess);
             }
         }),
         updateTable: updateFilteredTable
