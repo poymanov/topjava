@@ -52,13 +52,6 @@ public class MealServiceImpl implements MealService {
     }
 
     @Override
-    public void update(MealTo mealTo, int userId) {
-        Meal meal = get(mealTo.getId(), userId);
-        Assert.notNull(meal, "meal must not be null");
-        checkNotFoundWithId(repository.save(MealsUtil.updateFromTo(meal, mealTo), userId), meal.getId());
-    }
-
-    @Override
     public Meal create(Meal meal, int userId) {
         Assert.notNull(meal, "meal must not be null");
         return repository.save(meal, userId);
