@@ -7,8 +7,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
+import ru.javawebinar.topjava.util.exception.ErrorInfo;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
+
+import static ru.javawebinar.topjava.util.exception.ErrorType.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -83,6 +87,25 @@ class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void testUpdateValidationFailed() throws Exception {
+        Meal meal = new Meal(null, null, null, 0);
+
+        ResultActions action = mockMvc.perform(put(REST_URL + MEAL1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(meal))
+                .with(userHttpBasic(USER)))
+                .andExpect(status().isUnprocessableEntity());
+
+        ErrorInfo returned = readFromJson(action, ErrorInfo.class);
+
+        assertThat(returned.getUrl()).isEqualTo("http://localhost" + REST_URL + MEAL1_ID);
+        assertThat(returned.getType()).isEqualTo(VALIDATION_ERROR);
+        assertThat(returned.getDetail()).contains("description");
+        assertThat(returned.getDetail()).contains("dateTime");
+        assertThat(returned.getDetail()).contains("calories");
+    }
+
+    @Test
     void testCreate() throws Exception {
         Meal created = getCreated();
         ResultActions action = mockMvc.perform(post(REST_URL)
@@ -95,6 +118,25 @@ class MealRestControllerTest extends AbstractControllerTest {
 
         assertMatch(returned, created);
         assertMatch(service.getAll(ADMIN_ID), ADMIN_MEAL2, created, ADMIN_MEAL1);
+    }
+
+    @Test
+    void testCreateValidationFailed() throws Exception {
+        Meal meal = new Meal(null, null, null, 0);
+
+        ResultActions action = mockMvc.perform(post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(meal))
+                .with(userHttpBasic(ADMIN)))
+                .andExpect(status().isUnprocessableEntity());
+
+        ErrorInfo returned = readFromJson(action, ErrorInfo.class);
+
+        assertThat(returned.getUrl()).isEqualTo("http://localhost" + REST_URL);
+        assertThat(returned.getType()).isEqualTo(VALIDATION_ERROR);
+        assertThat(returned.getDetail()).contains("description");
+        assertThat(returned.getDetail()).contains("dateTime");
+        assertThat(returned.getDetail()).contains("calories");
     }
 
     @Test

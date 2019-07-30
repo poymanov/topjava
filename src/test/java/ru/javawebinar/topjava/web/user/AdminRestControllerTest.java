@@ -5,11 +5,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.util.exception.ErrorInfo;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import java.util.Collections;
+import static ru.javawebinar.topjava.util.exception.ErrorType.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -88,10 +91,29 @@ class AdminRestControllerTest extends AbstractControllerTest {
         mockMvc.perform(put(REST_URL + USER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
-                .content(JsonUtil.writeValue(updated)))
+                .content(jsonWithPassword(updated, "password")))
                 .andExpect(status().isNoContent());
 
         assertMatch(userService.get(USER_ID), updated);
+    }
+
+    @Test
+    void testUpdateValidationFailed() throws Exception {
+        User user = new User(null, null, null, null, 0, Role.ROLE_USER);
+
+        ResultActions action = mockMvc.perform(put(REST_URL + USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(user)))
+                .andExpect(status().isUnprocessableEntity());
+
+        ErrorInfo returned = readFromJson(action, ErrorInfo.class);
+        assertThat(returned.getUrl()).isEqualTo("http://localhost" + REST_URL + USER_ID);
+        assertThat(returned.getType()).isEqualTo(VALIDATION_ERROR);
+        assertThat(returned.getDetail()).contains("name");
+        assertThat(returned.getDetail()).contains("email");
+        assertThat(returned.getDetail()).contains("password");
+        assertThat(returned.getDetail()).contains("caloriesPerDay");
     }
 
     @Test
@@ -108,6 +130,24 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
         assertMatch(returned, expected);
         assertMatch(userService.getAll(), ADMIN, expected, USER);
+    }
+
+    @Test
+    void testCreateValidationFailed() throws Exception {
+        User expected = new User(null, null, null, null, 0, Role.ROLE_USER);
+        ResultActions action = mockMvc.perform(post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(expected)))
+                .andExpect(status().isUnprocessableEntity());
+
+        ErrorInfo returned = readFromJson(action, ErrorInfo.class);
+        assertThat(returned.getUrl()).isEqualTo("http://localhost" + REST_URL);
+        assertThat(returned.getType()).isEqualTo(VALIDATION_ERROR);
+        assertThat(returned.getDetail()).contains("name");
+        assertThat(returned.getDetail()).contains("email");
+        assertThat(returned.getDetail()).contains("password");
+        assertThat(returned.getDetail()).contains("caloriesPerDay");
     }
 
     @Test
