@@ -117,6 +117,23 @@ class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void testUpdateWithExistedEmail() throws Exception {
+        User user = new User(USER);
+        user.setEmail("admin@gmail.com");
+
+        ResultActions action = mockMvc.perform(put(REST_URL + USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(user)))
+                .andExpect(status().isUnprocessableEntity());
+
+        ErrorInfo returned = readFromJson(action, ErrorInfo.class);
+        assertThat(returned.getUrl()).isEqualTo("http://localhost" + REST_URL + USER_ID);
+        assertThat(returned.getType()).isEqualTo(VALIDATION_ERROR);
+        assertThat(returned.getDetail()).contains("email");
+    }
+
+    @Test
     void testCreate() throws Exception {
         User expected = new User(null, "New", "new@gmail.com", "newPass", 2300, Role.ROLE_USER, Role.ROLE_ADMIN);
         ResultActions action = mockMvc.perform(post(REST_URL)
@@ -134,11 +151,11 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
     @Test
     void testCreateValidationFailed() throws Exception {
-        User expected = new User(null, null, null, null, 0, Role.ROLE_USER);
+        User user = new User(null, null, null, null, 0, Role.ROLE_USER);
         ResultActions action = mockMvc.perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
-                .content(JsonUtil.writeValue(expected)))
+                .content(JsonUtil.writeValue(user)))
                 .andExpect(status().isUnprocessableEntity());
 
         ErrorInfo returned = readFromJson(action, ErrorInfo.class);
@@ -148,6 +165,21 @@ class AdminRestControllerTest extends AbstractControllerTest {
         assertThat(returned.getDetail()).contains("email");
         assertThat(returned.getDetail()).contains("password");
         assertThat(returned.getDetail()).contains("caloriesPerDay");
+    }
+
+    @Test
+    void testCreateWithExistedEmail() throws Exception {
+        User user = new User(USER);
+        ResultActions action = mockMvc.perform(post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(user)))
+                .andExpect(status().isUnprocessableEntity());
+
+        ErrorInfo returned = readFromJson(action, ErrorInfo.class);
+        assertThat(returned.getUrl()).isEqualTo("http://localhost" + REST_URL);
+        assertThat(returned.getType()).isEqualTo(VALIDATION_ERROR);
+        assertThat(returned.getDetail()).contains("email");
     }
 
     @Test
