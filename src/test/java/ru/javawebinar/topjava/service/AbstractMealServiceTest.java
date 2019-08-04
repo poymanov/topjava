@@ -11,8 +11,7 @@ import java.time.LocalDate;
 import java.time.Month;
 
 import static java.time.LocalDateTime.of;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
@@ -78,6 +77,12 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
         assertMatch(service.getBetweenDates(
                 LocalDate.of(2015, Month.MAY, 30),
                 LocalDate.of(2015, Month.MAY, 30), USER_ID), MEAL3, MEAL2, MEAL1);
+    }
+
+    @Test
+    void getByDateTime() {
+        assertMatch(service.getByDateTime(MEAL1.getDateTime(), USER_ID), MEAL1);
+        assertThrows(NotFoundException.class, () -> service.getByDateTime(ADMIN_MEAL1.getDateTime(), USER_ID));
     }
 
     @Test

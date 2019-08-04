@@ -106,6 +106,24 @@ class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void testUpdateWithExistedDateTime() throws Exception {
+        Meal meal = getUpdated();
+        meal.setDateTime(MEAL2.getDateTime());
+
+        ResultActions action = mockMvc.perform(put(REST_URL + MEAL1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(meal))
+                .with(userHttpBasic(USER)))
+                .andExpect(status().isUnprocessableEntity());
+
+        ErrorInfo returned = readFromJson(action, ErrorInfo.class);
+
+        assertThat(returned.getUrl()).isEqualTo("http://localhost" + REST_URL + MEAL1_ID);
+        assertThat(returned.getType()).isEqualTo(VALIDATION_ERROR);
+        assertThat(returned.getDetail()).contains("dateTime");
+    }
+
+    @Test
     void testCreate() throws Exception {
         Meal created = getCreated();
         ResultActions action = mockMvc.perform(post(REST_URL)
@@ -121,13 +139,31 @@ class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void testCreateWithExistedDateTime() throws Exception {
+        Meal created = getCreated();
+        created.setDateTime(MEAL1.getDateTime());
+
+        ResultActions action = mockMvc.perform(post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(created))
+                .with(userHttpBasic(USER)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+
+        ErrorInfo returned = readFromJson(action, ErrorInfo.class);
+        assertThat(returned.getUrl()).isEqualTo("http://localhost" + REST_URL);
+        assertThat(returned.getType()).isEqualTo(VALIDATION_ERROR);
+        assertThat(returned.getDetail()).contains("dateTime");
+    }
+
+    @Test
     void testCreateValidationFailed() throws Exception {
         Meal meal = new Meal(null, null, null, 0);
 
         ResultActions action = mockMvc.perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(meal))
-                .with(userHttpBasic(ADMIN)))
+                .with(userHttpBasic(USER)))
                 .andExpect(status().isUnprocessableEntity());
 
         ErrorInfo returned = readFromJson(action, ErrorInfo.class);

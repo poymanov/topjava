@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
+import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
 
 @Service
 public class MealServiceImpl implements MealService {
@@ -58,5 +59,10 @@ public class MealServiceImpl implements MealService {
     @Override
     public Meal getWithUser(int id, int userId) {
         return checkNotFoundWithId(repository.getWithUser(id, userId), id);
+    }
+
+    @Override
+    public Meal getByDateTime(LocalDateTime date, int userId) {
+        return checkNotFound(repository.getByDateTime(date, userId), "date=" + date + " userId=" + userId);
     }
 }

@@ -16,6 +16,7 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping(value = MealRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -43,7 +44,11 @@ public class MealRestController extends AbstractMealController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody Meal meal, BindingResult result, @PathVariable int id) {
+    public void update(@Valid @RequestBody Meal meal, BindingResult result, @PathVariable int id, Locale locale) {
+        if (meal.getDateTime() != null && meal.getId() != null) {
+            validateDateTimeUpdate(meal.getDateTime(), meal.getId(), result, locale);
+        }
+
         if (result.hasErrors()) {
             throw new IllegalRequestDataException(ValidationUtil.getErrors(result));
         }
@@ -52,7 +57,9 @@ public class MealRestController extends AbstractMealController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Meal> createWithLocation(@Valid @RequestBody Meal meal, BindingResult result) {
+    public ResponseEntity<Meal> createWithLocation(@Valid @RequestBody Meal meal, BindingResult result, Locale locale) {
+        validateDateTimeCreate(meal.getDateTime(), result, locale);
+
         if (result.hasErrors()) {
             throw new IllegalRequestDataException(ValidationUtil.getErrors(result));
         }

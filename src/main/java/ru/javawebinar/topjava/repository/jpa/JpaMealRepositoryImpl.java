@@ -62,4 +62,15 @@ public class JpaMealRepositoryImpl implements MealRepository {
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate).getResultList();
     }
+
+    @Override
+    public Meal getByDateTime(LocalDateTime date, int userId) {
+        try {
+            return ((Meal) em.createQuery("SELECT m FROM Meal m WHERE m.dateTime=:dateTime AND m.user.id=:userId")
+                    .setParameter("dateTime", date)
+                    .setParameter("userId", userId).getSingleResult());
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }
