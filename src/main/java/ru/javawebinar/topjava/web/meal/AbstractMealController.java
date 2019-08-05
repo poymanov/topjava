@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.validation.BindingResult;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
@@ -12,10 +11,8 @@ import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Locale;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
@@ -73,31 +70,5 @@ public abstract class AbstractMealController {
 
         List<Meal> mealsDateFiltered = service.getBetweenDates(startDate, endDate, userId);
         return MealsUtil.getFilteredWithExcess(mealsDateFiltered, SecurityUtil.authUserCaloriesPerDay(), startTime, endTime);
-    }
-
-    public void validateDateTimeCreate(LocalDateTime dateTime, BindingResult result, Locale locale) {
-        int userId = SecurityUtil.authUserId();
-
-        try {
-            service.getByDateTime(dateTime, userId);
-            rejectDateTime(result, locale);
-        } catch (Exception e) {
-        }
-    }
-
-    public void validateDateTimeUpdate(LocalDateTime dateTime, int id, BindingResult result, Locale locale) {
-        int userId = SecurityUtil.authUserId();
-
-        try {
-            if (!service.getByDateTime(dateTime, userId).getId().equals(id)) {
-                rejectDateTime(result, locale);
-            }
-        } catch (Exception e) {
-        }
-        ;
-    }
-
-    private void rejectDateTime(BindingResult result, Locale locale) {
-        result.rejectValue("dateTime", "meal.invalidDateTime", messageSource.getMessage("meal.invalidDateTime", null, locale));
     }
 }

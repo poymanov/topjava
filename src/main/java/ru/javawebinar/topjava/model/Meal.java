@@ -6,6 +6,7 @@ import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.javawebinar.topjava.View;
 import ru.javawebinar.topjava.util.DateTimeUtil;
+import ru.javawebinar.topjava.validators.ExistedMealByDateTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -26,6 +27,7 @@ import java.time.LocalTime;
 })
 @Entity
 @Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "meals_unique_user_datetime_idx")})
+@ExistedMealByDateTime
 public class Meal extends AbstractBaseEntity {
     public static final String ALL_SORTED = "Meal.getAll";
     public static final String DELETE = "Meal.delete";
