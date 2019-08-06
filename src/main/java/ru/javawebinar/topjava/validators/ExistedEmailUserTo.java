@@ -10,8 +10,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target({TYPE})
 @Retention(RUNTIME)
-@Constraint(validatedBy = ExistedMealByDateTimeValidator.class)
-public @interface ExistedMealByDateTime {
+@Constraint(validatedBy = ExistedEmailUserToValidator.class)
+public @interface ExistedEmailUserTo {
     String message() default "";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};

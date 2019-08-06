@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.web.user;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.util.exception.ErrorInfo;
@@ -124,7 +125,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
         ResultActions action = mockMvc.perform(put(REST_URL + USER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
-                .content(JsonUtil.writeValue(user)))
+                .content(jsonWithPassword(user, USER.getPassword())))
                 .andExpect(status().isUnprocessableEntity());
 
         ErrorInfo returned = readFromJson(action, ErrorInfo.class);
@@ -173,7 +174,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
         ResultActions action = mockMvc.perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
-                .content(JsonUtil.writeValue(user)))
+                .content(jsonWithPassword(user, user.getPassword())))
                 .andExpect(status().isUnprocessableEntity());
 
         ErrorInfo returned = readFromJson(action, ErrorInfo.class);

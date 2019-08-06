@@ -4,13 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.validation.BindingResult;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.to.UserTo;
 
 import java.util.List;
-import java.util.Locale;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
@@ -65,25 +63,5 @@ public abstract class AbstractUserController {
     public void enable(int id, boolean enabled) {
         log.info(enabled ? "enable {}" : "disable {}", id);
         service.enable(id, enabled);
-    }
-
-    public void validateEmailNew(String email, BindingResult result, Locale locale) {
-        try {
-            if (service.getByEmail(email.toLowerCase()) != null) {
-                rejectedEmail(result, locale);
-            }
-        } catch (Exception e) {};
-    }
-
-    public void validateEmailUpdate(String email, int id, BindingResult result, Locale locale) {
-        try {
-            if (!service.getByEmail(email.toLowerCase()).getId().equals(id)) {
-                rejectedEmail(result, locale);
-            }
-        } catch (Exception e) {};
-    }
-
-    protected void rejectedEmail(BindingResult result, Locale locale) {
-        result.rejectValue("email", "user.invalidEmail", messageSource.getMessage("user.invalidEmail", null, locale));
     }
 }

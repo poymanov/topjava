@@ -6,6 +6,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.util.CollectionUtils;
+import ru.javawebinar.topjava.validators.ExistedEmailUser;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -24,6 +25,7 @@ import static ru.javawebinar.topjava.util.UserUtil.DEFAULT_CALORIES_PER_DAY;
 })
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "email", name = "users_unique_email_idx")})
+@ExistedEmailUser
 public class User extends AbstractNamedEntity {
 
     public static final String DELETE = "User.delete";

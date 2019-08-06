@@ -111,7 +111,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void testUpdateWithSameEmail() throws Exception {
-        UserTo updatedTo = new UserTo(null, "newName", USER.getEmail(), "newPassword", 1500);
+        UserTo updatedTo = new UserTo(USER_ID, "newName", USER.getEmail(), "newPassword", 1500);
 
         mockMvc.perform(put(REST_URL).contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(USER))

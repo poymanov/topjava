@@ -48,12 +48,6 @@ public class RootController extends AbstractUserController {
 
     @PostMapping("/profile")
     public String updateProfile(@Valid UserTo userTo, BindingResult result, SessionStatus status) {
-        try {
-            if (!service.getByEmail(userTo.getEmail().toLowerCase()).getId().equals(userTo.getId())) {
-                result.rejectValue("email", "user.invalidEmail");
-            }
-        } catch (Exception e) {}
-
         if (result.hasErrors()) {
             return "profile";
         } else {
@@ -73,12 +67,6 @@ public class RootController extends AbstractUserController {
 
     @PostMapping("/register")
     public String saveRegister(@Valid UserTo userTo, BindingResult result, SessionStatus status, ModelMap model) {
-        try {
-            if (service.getByEmail(userTo.getEmail().toLowerCase()) != null) {
-                result.rejectValue("email", "user.invalidEmail");
-            }
-        } catch (Exception e) {}
-
         if (result.hasErrors()) {
             model.addAttribute("register", true);
             return "profile";
