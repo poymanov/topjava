@@ -34,8 +34,8 @@
                 <li class="nav-item dropdown">
                     <a class="dropdown-toggle nav-link my-1 ml-2" data-toggle="dropdown" aria-expanded="false">${pageContext.response.locale}</a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="${pageContext.request.contextPath}/login?lang=en">English</a>
-                        <a class="dropdown-item" href="${pageContext.request.contextPath}/login?lang=ru">Русский</a>
+                        <a class="dropdown-item" href="${pageContext.request.getAttribute("javax.servlet.forward.request_uri")}?lang=en">English</a>
+                        <a class="dropdown-item" href="${pageContext.request.getAttribute("javax.servlet.forward.request_uri")}?lang=ru">Русский</a>
                     </div>
                 </li>
             </ul>
