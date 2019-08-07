@@ -1,8 +1,9 @@
 package ru.javawebinar.topjava.to;
 
 import org.hibernate.validator.constraints.Range;
+import ru.javawebinar.topjava.HasEmail;
 import ru.javawebinar.topjava.util.UserUtil;
-import ru.javawebinar.topjava.validators.ExistedEmailUserTo;
+import ru.javawebinar.topjava.validators.ExistedEmailUser;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -10,8 +11,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
-@ExistedEmailUserTo
-public class UserTo extends BaseTo implements Serializable {
+@ExistedEmailUser
+public class UserTo extends BaseTo implements Serializable, HasEmail {
     private static final long serialVersionUID = 1L;
 
     @NotBlank

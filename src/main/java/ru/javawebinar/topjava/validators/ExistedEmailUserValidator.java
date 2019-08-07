@@ -3,14 +3,14 @@ package ru.javawebinar.topjava.validators;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import ru.javawebinar.topjava.HasEmail;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
-import ru.javawebinar.topjava.web.SecurityUtil;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class ExistedEmailUserValidator implements ConstraintValidator<ExistedEmailUser, User> {
+public class ExistedEmailUserValidator implements ConstraintValidator<ExistedEmailUser, HasEmail> {
     @Autowired
     private UserRepository repository;
 
@@ -18,7 +18,7 @@ public class ExistedEmailUserValidator implements ConstraintValidator<ExistedEma
     private MessageSource messageSource;
 
     @Override
-    public boolean isValid(User user, ConstraintValidatorContext context) {
+    public boolean isValid(HasEmail user, ConstraintValidatorContext context) {
         User existedUser;
 
         try {
